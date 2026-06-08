@@ -1,0 +1,193 @@
+.canvas {
+  width: 100%;
+  height: calc(100vh - 60px);
+  background-color: #FCF9F1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   좌측 수직 타이포그래피 영역
+   ========================================================================== */
+.sidebar {
+  width: 80px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #FCF9F1;
+  z-index: 5;
+}
+
+.sidebarMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 75px; /* 시안 특유의 시원한 수직 간격 */
+}
+
+.sideLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: #444845;
+  opacity: 0.4;
+  white-space: nowrap;
+  transform: rotate(-90deg);
+  transform-origin: center center;
+}
+
+.activeLabel {
+  color: #9F3E47;
+  font-weight: 700;
+  opacity: 1;
+}
+
+/* ==========================================================================
+   메인 조각보 면 분할 보드 (Flex Layout 시스템)
+   ========================================================================== */
+.jogakboBoard {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(116, 120, 117, 0.25); /* 바느질 실선 칼라 */
+  gap: 1px; /* 원단 사이의 얇은 틈새 연출 */
+  padding: 1px;
+}
+
+/* 3대 대형 수평 레이어 분할 비율 */
+.rowTop {
+  height: 20%;
+  display: flex;
+  gap: 1px;
+}
+
+.rowMiddle {
+  height: 45%;
+  display: flex;
+  gap: 1px;
+}
+
+.rowBottom {
+  height: 35%;
+  display: flex;
+  gap: 1px;
+}
+
+/* 내부 서브 레이아웃 조립 틀 */
+.patchFlex {
+  display: flex;
+  gap: 1px;
+}
+
+.colLeft, .colRight, .colBottomLeft, .colBottomRight {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* ==========================================================================
+   개별 천 조각 원단 요소 스타일링
+   ========================================================================== */
+.patch {
+  height: 100%;
+  position: relative;
+}
+
+/* 상단 우측 네비게이션용 특수 조각 */
+.patchNav {
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 40px;
+  gap: 48px;
+  color: #5E5E5D;
+  font-family: 'Nimbus Sans', sans-serif;
+  font-size: 16px;
+}
+
+.navItem {
+  cursor: pointer;
+}
+
+.navIcon {
+  width: 20px;
+  height: 20px;
+  background-color: #5E5E5D;
+}
+
+/* 메타데이터 텍스트가 안착하는 폰트 조각 원단 */
+.patchMeta {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+}
+
+.metaLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 4px;
+}
+
+.metaTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.colorDot {
+  width: 12px;
+  height: 12px;
+}
+
+.metaTitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+}
+
+/* 좌상단 메인 브랜드 타이틀 */
+.titleText {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+  color: #1C1C17;
+  font-family: 'WenQuanYi Zen Hei', 'Gowun Batang', sans-serif;
+  font-size: 16px;
+}
+
+/* 최하단 푸터 텍스트 배치 조각 */
+.patchFooter {
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding: 32px 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+}
+
+.patchFooterSpace {
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 32px 24px;
+  gap: 32px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+}
+
+/* 우측 마감선 */
+.edgeLine {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background-color: #9F3E47;
+}

@@ -1,0 +1,17 @@
+.wrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #F9F8F6; /* 웹사이트 전역 바탕색 (은은한 백색/한지 느낌) */
+  overflow-x: hidden; /* 가로 스크롤이 생겨서 화면이 흔들리는 현상 방지 */
+}
+
+.contentArea {
+  width: 100%;
+  /* 헤더 높이(60px)를 제외한 나머지 화면을 최소 높이로 잡아서 
+     컨텐츠가 적어도 푸터나 바닥이 붕 뜨지 않게 만듭니다. */
+  min-height: calc(100vh - 60px); 
+  display: flex;
+  flex-direction: column;
+}
