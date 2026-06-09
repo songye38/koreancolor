@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
-
-interface ColorData {
-    id: string;
-    className: string;
-    name: string;
-    hanja: string;
-    info: string;
-}
+import type { TraditionalColor } from "../types/color";
+import { blueColors } from "../data/blue";
+import { redColors } from "../data/red";
+import { yellowColors } from "../data/yellow";
 
 interface Layout {
     colSpan: number;
@@ -14,53 +10,15 @@ interface Layout {
 }
 
 interface PatchData {
-    color: ColorData;
+    color: TraditionalColor;
+    shadeHex: string;
     layout: Layout;
 }
 
-const COLORS: ColorData[] = [
-    {
-        id: "black",
-        className: "bg-[#1a1c1b] text-white",
-        name: "Heuk (Black)",
-        hanja: "黑",
-        info: "North / Water / Winter",
-    },
-    {
-        id: "red",
-        className: "bg-[#9f3e47] text-white",
-        name: "Jok (Red)",
-        hanja: "赤",
-        info: "South / Fire / Summer",
-    },
-    {
-        id: "blue",
-        className: "bg-[#2e5a88] text-white",
-        name: "Cheong (Blue)",
-        hanja: "靑",
-        info: "East / Wood / Spring",
-    },
-    {
-        id: "white",
-        className: "bg-[#fcf9f1] text-black",
-        name: "Baek (White)",
-        hanja: "白",
-        info: "West / Metal / Autumn",
-    },
-    {
-        id: "yellow",
-        className: "bg-[#d4af37] text-black",
-        name: "Hwang (Yellow)",
-        hanja: "黃",
-        info: "Center / Earth / Seasons",
-    },
-    {
-        id: "neutral",
-        className: "bg-[#e5e2da] text-gray-700",
-        name: "Neutral (Hanji)",
-        hanja: "紙",
-        info: "Balance",
-    },
+const palettes = [
+    blueColors,
+    redColors,
+    yellowColors,
 ];
 
 const LAYOUTS: Layout[] = [
@@ -73,86 +31,127 @@ const LAYOUTS: Layout[] = [
     { colSpan: 3, rowSpan: 2 },
 ];
 
-// function shuffle<T>(array: T[]): T[] {
-//     const arr = [...array];
+function randomFrom<T>(array: T[]): T {
+    return array[
+        Math.floor(Math.random() * array.length)
+    ];
+}
 
-//     for (let i = arr.length - 1; i > 0; i--) {
-//         const j = Math.floor(Math.random() * (i + 1));
+/**
+ * 🎯 한 작품 생성 핵심
+ * - palette 선택 (청/적/황)
+ * - base color 선택
+ * - base.shades 사용
+ */
+function createRandomGrid(): {
+    patches: PatchData[];
+    base: TraditionalColor;
+} {
+    // 1. 계열 선택
+    const palette = randomFrom(palettes);
 
-//         [arr[i], arr[j]] = [arr[j], arr[i]];
-//     }
+    // 2. 대표 색 선택
+    const base = randomFrom(palette);
 
-//     return arr;
-// }
+    // 3. 패치 생성
+    const patches = Array.from(
+        { length: 80 },
+        () => {
+            const layout = randomFrom(LAYOUTS);
 
-// function randomColor(): ColorData {
-//     return COLORS[Math.floor(Math.random() * COLORS.length)];
-// }
+            const shade = randomFrom(
+                base.shades
+            );
 
-function createRandomGrid(): PatchData[] {
-    return Array.from({ length: 80 }, () => ({
-        layout:
-            LAYOUTS[
-                Math.floor(Math.random() * LAYOUTS.length)
-            ],
-        color:
-            COLORS[
-                Math.floor(Math.random() * COLORS.length)
-            ],
-    }));
+            return {
+                color: base,
+                shadeHex: shade.hex,
+                layout,
+            };
+        }
+    );
+
+    return { patches, base };
 }
 
 export default function JogakboGrid() {
-    const [patches, setPatches] = useState<PatchData[]>(
-        () => createRandomGrid()
-    );
-
     const [selectedColor, setSelectedColor] =
-        useState<ColorData | null>(null);
+        useState<TraditionalColor | null>(null);
 
+    const [baseColor, setBaseColor] =
+        useState<TraditionalColor>(() =>
+            randomFrom(blueColors)
+        );
+
+    const [patches, setPatches] =
+        useState<PatchData[]>([]);
+
+    /**
+     * 최초 생성
+     */
+    useEffect(() => {
+        const { patches, base } =
+            createRandomGrid();
+        setBaseColor(base);
+        setPatches(patches);
+    }, []);
+
+    /**
+     * 5초마다 일부 섞기 (작품 유지 + 살아있는 느낌)
+     */
     useEffect(() => {
         const interval = setInterval(() => {
             setPatches((prev) => {
                 const next = [...prev];
 
                 const swapCount =
-                    Math.floor(Math.random() * 3) + 2;
+                    Math.floor(Math.random() * 3) +
+                    2;
 
                 for (let i = 0; i < swapCount; i++) {
                     const a = Math.floor(
-                        Math.random() * next.length
+                        Math.random() *
+                            next.length
                     );
 
                     let b = Math.floor(
-                        Math.random() * next.length
+                        Math.random() *
+                            next.length
                     );
 
                     while (a === b) {
                         b = Math.floor(
-                            Math.random() * next.length
+                            Math.random() *
+                                next.length
                         );
                     }
 
-                    [next[a].color, next[b].color] = [
-                        next[b].color,
-                        next[a].color,
-                    ];
-
-                    [next[a].layout, next[b].layout] = [
+                    [
+                        next[a].layout,
+                        next[b].layout,
+                    ] = [
                         next[b].layout,
                         next[a].layout,
                     ];
                 }
 
-                return [...next];
+                return next;
             });
         }, 5000);
 
-        return () => clearInterval(interval);
+        return () =>
+            clearInterval(interval);
     }, []);
 
+    /**
+     * 새로운 작품 생성
+     */
     const regenerateGrid = () => {
-        setPatches(createRandomGrid());
+        const { patches, base } =
+            createRandomGrid();
+
+        setBaseColor(base);
+        setPatches(patches);
     };
 
     return (
@@ -161,76 +160,78 @@ export default function JogakboGrid() {
                 <button
                     onClick={regenerateGrid}
                     className="
+                        mt-16
                         px-4 py-2
                         bg-white
                         border
-                        shadow-sm
                         hover:shadow-md
                         transition-all
                     "
                 >
-                    Regenerate
+                다른 색상
                 </button>
             </div>
 
+            {/* 🎯 배경 = 작품의 가장 밝은 색 */}
             <div
                 className="
                     grid
-                    grid-cols-16
-                    auto-rows-[35px]
-                    gap-[1px]
-                    bg-neutral-300
+                    grid-cols-20
+                    auto-rows-[100px]
+                    gap-[3px]
                     min-h-screen
-                    p-[1px]
+                    p-[12px]
                 "
+                style={{
+                    backgroundColor:
+                        baseColor.shades[1].hex,
+                }}
             >
-                {patches.map((patch, index) => (
-                    <div
-                        key={index}
-                        onClick={() =>
-                            setSelectedColor(patch.color)
-                        }
-                        style={{
-                            gridColumn: `span ${patch.layout.colSpan}`,
-                            gridRow: `span ${patch.layout.rowSpan}`,
-                        }}
-                        className={`
-                            group
-                            ${patch.color.className}
-                            relative
-                            overflow-hidden
-                            cursor-pointer
-                            p-5
-                            flex
-                            items-end
-                            transition-all
-                            duration-500
-                            hover:scale-[1.02]
-                            hover:z-20
-                        `}
-                    >
+                {patches.map(
+                    (patch, index) => (
                         <div
+                            key={index}
+                            onClick={() =>
+                                setSelectedColor(
+                                    patch.color
+                                )
+                            }
+                            style={{
+                                gridColumn: `span ${patch.layout.colSpan}`,
+                                gridRow: `span ${patch.layout.rowSpan}`,
+                                backgroundColor:
+                                    patch.shadeHex,
+                            }}
                             className="
-                                absolute
-                                inset-0
+                                group
+                                relative
+                                overflow-hidden
+                                cursor-pointer
+                                p-5
+                                flex
+                                items-end
+                                transition-all
+                                duration-500
+                                hover:scale-[1.02]
+                                hover:z-20
+                                // rounded-[1px]
+                            "
+                        >
+                            <div className="
+                                absolute inset-0
                                 opacity-10
                                 bg-[radial-gradient(circle_at_center,white,transparent)]
-                            "
-                        />
+                            " />
 
-                        <div
-                            className="
-                                absolute
-                                inset-0
+                            <div className="
+                                absolute inset-0
                                 bg-black/0
                                 group-hover:bg-black/10
                                 transition-colors
                                 duration-300
-                            "
-                        />
+                            " />
 
-                        <div
-                            className="
+                            <div className="
                                 opacity-0
                                 translate-y-2
                                 group-hover:opacity-100
@@ -238,53 +239,35 @@ export default function JogakboGrid() {
                                 transition-all
                                 duration-300
                                 z-10
-                            "
-                        >
-                            <p className="text-[10px] uppercase opacity-70">
-                                {patch.color.info}
-                            </p>
-
-                            <div className="flex items-center gap-2">
-                                <span className="text-3xl">
-                                    {patch.color.hanja}
-                                </span>
-
+                            ">
                                 <span className="text-sm">
                                     {patch.color.name}
                                 </span>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    )
+                )}
             </div>
 
             {selectedColor && (
-                <div className="fixed inset-0 z-50 bg-[#fcf9f1] flex items-center justify-center">
+                <div className="fixed inset-0 z-50 bg-[#f5f1e8] flex items-center justify-center">
                     <button
                         onClick={() =>
                             setSelectedColor(null)
                         }
-                        className="absolute top-8 right-8 text-3xl"
+                        className="absolute top-8 right-8 text-3xl mt-15"
                     >
                         ×
                     </button>
 
                     <div className="max-w-xl px-10">
                         <p className="uppercase tracking-[0.3em] text-gray-500 mb-4">
-                            OBS-01
+                            {selectedColor.group} color
                         </p>
 
                         <h2 className="text-5xl mb-6">
-                            {selectedColor.name}
+                            {selectedColor?.name}
                         </h2>
-
-                        <div className="text-8xl mb-6">
-                            {selectedColor.hanja}
-                        </div>
-
-                        <p className="text-lg text-gray-600">
-                            {selectedColor.info}
-                        </p>
                     </div>
                 </div>
             )}
