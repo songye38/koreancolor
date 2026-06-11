@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import {useMemo, useState } from "react";
 import type { TraditionalColor } from "../types/color";
 import { blueColors } from "../data/blue";
 import { redColors } from "../data/red";
@@ -69,15 +69,15 @@ export default function ArchiveGrid() {
         [activeGroup]
     );
 
-    const [items, setItems] = useState<PatchData[]>(
-        () => createArchiveGrid(colorMap.blue)
-    );
+    const items = useMemo(() => {
+        return createArchiveGrid(palette);
+    }, [palette]);
 
     const [selectedColor, setSelectedColor] = useState<TraditionalColor | null>(null);
 
-    useEffect(() => {
-        setItems(createArchiveGrid(palette));
-    }, [palette]);
+    // useEffect(() => {
+    //     setItems(createArchiveGrid(palette));
+    // }, [palette]);
 
     return (
         <div className="min-h-screen">

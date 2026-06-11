@@ -75,26 +75,15 @@ function createRandomGrid(): {
 }
 
 export default function JogakboGrid() {
+
+    const initial = createRandomGrid();
     const [selectedColor, setSelectedColor] =
         useState<TraditionalColor | null>(null);
 
-    const [baseColor, setBaseColor] =
-        useState<TraditionalColor>(() =>
-            randomFrom(blueColors)
-        );
+    const [baseColor, setBaseColor] = useState(initial.base);
 
-    const [patches, setPatches] =
-        useState<PatchData[]>([]);
+    const [patches, setPatches] = useState(initial.patches);
 
-    /**
-     * 최초 생성
-     */
-    useEffect(() => {
-        const { patches, base } =
-            createRandomGrid();
-        setBaseColor(base);
-        setPatches(patches);
-    }, []);
 
     /**
      * 5초마다 일부 섞기 (작품 유지 + 살아있는 느낌)
@@ -111,18 +100,18 @@ export default function JogakboGrid() {
                 for (let i = 0; i < swapCount; i++) {
                     const a = Math.floor(
                         Math.random() *
-                            next.length
+                        next.length
                     );
 
                     let b = Math.floor(
                         Math.random() *
-                            next.length
+                        next.length
                     );
 
                     while (a === b) {
                         b = Math.floor(
                             Math.random() *
-                                next.length
+                            next.length
                         );
                     }
 
@@ -130,9 +119,9 @@ export default function JogakboGrid() {
                         next[a].layout,
                         next[b].layout,
                     ] = [
-                        next[b].layout,
-                        next[a].layout,
-                    ];
+                            next[b].layout,
+                            next[a].layout,
+                        ];
                 }
 
                 return next;
@@ -168,7 +157,7 @@ export default function JogakboGrid() {
                         transition-all
                     "
                 >
-                다른 색상
+                    다른 색상
                 </button>
             </div>
 
