@@ -1,4 +1,3 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom';
 import styles from './Layout.module.css'; // 레이아웃 전용 CSS Module
 import Header from './Header';

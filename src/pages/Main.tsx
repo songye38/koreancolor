@@ -1,5 +1,3 @@
-import React, { useState, useEffect } from 'react';
-
 // 1. 오방색 에센스 팔레트 원천 데이터 정의
 // interface ColorData {
 //   id: string;
@@ -11,6 +9,8 @@ import React, { useState, useEffect } from 'react';
 //   code: string;
 //   desc: string;
 // }
+
+import { useEffect, useState } from "react";
 
 // const colors: ColorData[] = [
 //   { id: 'black', bgClass: 'bg-[#1a1c1b]', textClass: 'text-[#fcf9f1]', name: 'Heuk (Black)', hanja: '黑', info: 'North / Water / Winter', code: 'OBS-05', desc: '북방을 상징하는 숙연한 현색(玄色)으로 만물의 저장을 의미하며 궁궐 내 전각의 기둥이나 뒤안의 그늘진 기와선에 스며든 깊은 밤의 색감입니다.' },
